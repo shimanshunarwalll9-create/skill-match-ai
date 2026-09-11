@@ -11,8 +11,10 @@ import {
   LogOut,
   Network,
   CheckCircle2,
+  ShieldCheck,
 } from "lucide-react";
 import { UserRole, NotificationItem } from "../types";
+import { User, Plus, RotateCcw } from "lucide-react";
 
 interface NavbarProps {
   currentRole: UserRole;
@@ -25,7 +27,12 @@ interface NavbarProps {
   onMarkNotificationRead: (id: string) => void;
   onOpenEcosystem: () => void;
   userName: string;
+  userEmail?: string;
+  emailVerified?: boolean;
   onLogout: () => void;
+  onOpenProfileEditor?: () => void;
+  onOpenCreateOpp?: () => void;
+  onResetData?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -39,7 +46,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   onMarkNotificationRead,
   onOpenEcosystem,
   userName,
+  userEmail,
+  emailVerified = true,
   onLogout,
+  onOpenProfileEditor,
+  onOpenCreateOpp,
+  onResetData,
 }) => {
   const unreadCount = notifications.filter((n) => n.unread).length;
 
@@ -299,11 +311,58 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* User Profile avatar & logout */}
-            <div className="flex items-center gap-2 pl-2 border-l border-stone-200">
-              <div className="w-8 h-8 rounded-full bg-stone-900 text-white text-xs font-bold flex items-center justify-center">
-                {userName.charAt(0)}
+            {/* User Profile avatar & actions */}
+            <div className="flex items-center gap-1.5 pl-2 border-l border-stone-200">
+              {currentRole === "student" && onOpenProfileEditor && (
+                <button
+                  onClick={onOpenProfileEditor}
+                  className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors"
+                  title="Edit your real profile, skills, and resume"
+                >
+                  <User className="w-3.5 h-3.5 text-amber-600" />
+                  Profile
+                </button>
+              )}
+
+              {onOpenCreateOpp && (
+                <button
+                  onClick={onOpenCreateOpp}
+                  className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white transition-colors shadow-xs"
+                  title="Post a live opportunity or hackathon"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Post Opp
+                </button>
+              )}
+
+              <div className="relative">
+                <button
+                  onClick={currentRole === "student" && onOpenProfileEditor ? onOpenProfileEditor : undefined}
+                  className="w-8 h-8 rounded-full bg-stone-900 text-white text-xs font-bold flex items-center justify-center hover:ring-2 hover:ring-amber-500 transition-all cursor-pointer"
+                  title={`${userName} (${userEmail || "Verified"})${currentRole === "student" ? " - Click to edit profile" : ""}`}
+                >
+                  {userName.charAt(0)}
+                </button>
+                {emailVerified && (
+                  <span
+                    className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs border border-white"
+                    title="Email address is verified"
+                  >
+                    <ShieldCheck className="w-2.5 h-2.5" />
+                  </span>
+                )}
               </div>
+
+              {onResetData && (
+                <button
+                  onClick={onResetData}
+                  className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-100 transition-colors"
+                  title="Reset to clean defaults"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+              )}
+
               <button
                 onClick={onLogout}
                 className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-100 transition-colors"

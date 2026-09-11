@@ -18,6 +18,7 @@ interface OpportunitiesViewProps {
   profile: StudentProfile;
   onApplyOpportunity: (id: string) => void;
   onNavigateTeamMatch: () => void;
+  onOpenCreateOpp?: () => void;
 }
 
 export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
@@ -25,6 +26,7 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
   profile,
   onApplyOpportunity,
   onNavigateTeamMatch,
+  onOpenCreateOpp,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string>("All");
@@ -60,12 +62,25 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
             </p>
           </div>
 
-          <button
-            onClick={onNavigateTeamMatch}
-            className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition-colors shadow-xs flex items-center gap-2 self-start md:self-center"
-          >
-            Find Teammates with TeamMatch →
-          </button>
+          <div className="flex flex-wrap items-center gap-2 self-start md:self-center">
+            {onOpenCreateOpp && (
+              <button
+                type="button"
+                onClick={onOpenCreateOpp}
+                className="px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-50 text-stone-800 font-semibold text-xs transition-colors shadow-xs flex items-center gap-1.5"
+                id="feed-post-opp-btn"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                + Post Opportunity
+              </button>
+            )}
+            <button
+              onClick={onNavigateTeamMatch}
+              className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition-colors shadow-xs flex items-center gap-2"
+            >
+              Find Teammates →
+            </button>
+          </div>
         </div>
       </div>
 

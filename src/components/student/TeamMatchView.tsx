@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Users,
   Sparkles,
@@ -9,14 +9,18 @@ import {
   ArrowRight,
   ShieldCheck,
   Check,
+  X,
+  UserPlus,
 } from "lucide-react";
 import { StudentProfile, TeammateCandidate, Opportunity } from "../../types";
+import { calculateTeammateSynergy } from "../../utils/matchingEngine";
 
 interface TeamMatchViewProps {
   profile: StudentProfile;
   opportunities: Opportunity[];
   teammates: TeammateCandidate[];
   onInviteTeammate: (candidateId: string) => void;
+  onAddTeammate?: (candidate: TeammateCandidate) => void;
 }
 
 export const TeamMatchView: React.FC<TeamMatchViewProps> = ({
@@ -24,13 +28,59 @@ export const TeamMatchView: React.FC<TeamMatchViewProps> = ({
   opportunities,
   teammates,
   onInviteTeammate,
+  onAddTeammate,
 }) => {
   const [selectedTargetOpp, setSelectedTargetOpp] = useState<string>("opp-1");
   const [neededSkillsFilter, setNeededSkillsFilter] = useState<string>("React + UI/UX");
   const [activeTeammates, setActiveTeammates] = useState<TeammateCandidate[]>(teammates);
   const [inviteModalCandidate, setInviteModalCandidate] = useState<TeammateCandidate | null>(null);
   const [inviteNote, setInviteNote] = useState("");
-  const [squad, setSquad] = useState<string[]>(["Rahul Sharma (ML Lead)"]);
+  const [squad, setSquad] = useState<string[]>([`${profile.name.split(" ")[0]} (${profile.careerGoal.split(" ")[0]} Lead)`]);
+
+  // Peer Creation Modal
+  const [showAddPeerModal, setShowAddPeerModal] = useState(false);
+  const [peerName, setPeerName] = useState("");
+  const [peerRole, setPeerRole] = useState("Full Stack Developer");
+  const [peerYear, setPeerYear] = useState("3rd Year");
+  const [peerSkills, setPeerSkills] = useState("React, Tailwind CSS, TypeScript, Supabase");
+
+  // Dynamically recalculate synergy based on current profile skills
+  const recalculatedTeammates = useMemo(() => {
+    return activeTeammates.map((t) => {
+      const synergy = calculateTeammateSynergy(profile.skills, t.skills);
+      return {
+        ...t,
+        compatibility: synergy.compatibility,
+        complementarySkills: synergy.complementarySkills.length > 0 ? synergy.complementarySkills : t.complementarySkills,
+      };
+    });
+  }, [activeTeammates, profile.skills]);
+
+  const handleAddPeerSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!peerName.trim()) return;
+    const peerSkillsArr = peerSkills.split(",").map((s) => s.trim()).filter(Boolean);
+    const synergy = calculateTeammateSynergy(profile.skills, peerSkillsArr);
+
+    const newCandidate: TeammateCandidate = {
+      id: `peer-${Date.now()}`,
+      name: peerName.trim(),
+      roleTitle: peerRole.trim() || "Collaborator",
+      college: "Campus Engineering",
+      year: peerYear,
+      compatibility: synergy.compatibility,
+      skills: peerSkillsArr,
+      complementarySkills: synergy.complementarySkills.length > 0 ? synergy.complementarySkills : peerSkillsArr,
+      matchReason: `Direct skill synergy with ${profile.name.split(" ")[0]}'s verified stack`,
+      bio: `Peer collaborator specializing in ${peerRole}`,
+      invited: false,
+    };
+
+    setActiveTeammates((prev) => [newCandidate, ...prev]);
+    if (onAddTeammate) onAddTeammate(newCandidate);
+    setShowAddPeerModal(false);
+    setPeerName("");
+  };
 
   const targetOpp =
     opportunities.find((o) => o.id === selectedTargetOpp) || opportunities[0];
@@ -149,22 +199,33 @@ export const TeamMatchView: React.FC<TeamMatchViewProps> = ({
 
       {/* 3. Recommended Teammates Grid */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-bold text-stone-900">
-              AI Suggested Teammates
-            </h2>
-            <span className="text-xs text-stone-400">
-              Calculated based on {profile.name}'s stack + {targetOpp.title}
-            </span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-stone-900">
+                AI Suggested Teammates
+              </h2>
+              <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                {recalculatedTeammates.length} Compatible Peers
+              </span>
+            </div>
+            <p className="text-xs text-stone-500 mt-0.5">
+              Dynamically matched against {profile.name}'s verified skillset ({profile.skills.slice(0, 3).join(", ")}).
+            </p>
           </div>
-          <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-            {activeTeammates.length} Compatible Peers Found
-          </span>
+          <button
+            type="button"
+            onClick={() => setShowAddPeerModal(true)}
+            className="px-3.5 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs self-start sm:self-auto"
+            id="add-custom-peer-btn"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            + Add Real Classmate
+          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {activeTeammates.map((candidate) => {
+          {recalculatedTeammates.map((candidate) => {
             const isTopMatch = candidate.compatibility >= 90;
             return (
               <div
@@ -329,6 +390,113 @@ export const TeamMatchView: React.FC<TeamMatchViewProps> = ({
                 <Send className="w-3.5 h-3.5" /> Send Teammate Invitation
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Add Peer Modal */}
+      {showAddPeerModal && (
+        <div className="fixed inset-0 z-50 bg-stone-900/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-2xl max-w-md w-full p-6 border border-stone-200 shadow-2xl space-y-4 animate-in zoom-in-95"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-stone-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-stone-900 text-white flex items-center justify-center">
+                  <UserPlus className="w-5 h-5 text-amber-500" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-stone-900">
+                    Add Real Classmate / Peer
+                  </h3>
+                  <p className="text-[11px] text-stone-500">
+                    AI calculates dynamic synergy against your skills.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAddPeerModal(false)}
+                className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddPeerSubmit} className="space-y-3.5">
+              <div>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={peerName}
+                  onChange={(e) => setPeerName(e.target.value)}
+                  placeholder="e.g. Priya Singh"
+                  className="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Primary Role / Focus
+                  </label>
+                  <input
+                    type="text"
+                    value={peerRole}
+                    onChange={(e) => setPeerRole(e.target.value)}
+                    placeholder="e.g. UI/UX Designer"
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Academic Year
+                  </label>
+                  <select
+                    value={peerYear}
+                    onChange={(e) => setPeerYear(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-white"
+                  >
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="Final Year">Final Year</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Technical Skills (comma-separated) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={peerSkills}
+                  onChange={(e) => setPeerSkills(e.target.value)}
+                  placeholder="e.g. React, Next.js, Figma, Tailwind CSS"
+                  className="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2 border-t border-stone-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddPeerModal(false)}
+                  className="px-3.5 py-2 text-xs font-semibold text-stone-600 hover:text-stone-900"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold shadow-xs"
+                >
+                  Add Peer & Calculate Synergy
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

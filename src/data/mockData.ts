@@ -6,6 +6,8 @@ import {
   TeammateCandidate,
   NotificationItem,
   GrowthMetrics,
+  SkillEndorsement,
+  PeerEndorsementRequest,
 } from "../types";
 
 export const initialStudentProfile: StudentProfile = {
@@ -33,6 +35,75 @@ export const initialStudentProfile: StudentProfile = {
   aiRecommendation:
     "Build one deployed AI project and participate in a team-based hackathon to strengthen your profile.",
   githubUrl: "https://github.com/rahul-ai-dev",
+  endorsements: [
+    {
+      id: "end-1",
+      skill: "Python",
+      endorserName: "Simran Kaur",
+      endorserRole: "Frontend & UI Lead",
+      projectOrEvent: "Smart India Hackathon 2025",
+      relationship: "teammate",
+      comment:
+        "Rahul architected the backend ML pipelines and async Python worker queues flawlessly during our 36hr hackathon sprint.",
+      status: "verified",
+      requestedAt: "Dec 14, 2025",
+      verifiedAt: "Dec 15, 2025",
+      proficiencyRating: 5,
+    },
+    {
+      id: "end-2",
+      skill: "PyTorch",
+      endorserName: "Amit Verma",
+      endorserRole: "Cloud & DevOps Engineer",
+      projectOrEvent: "Smart India Hackathon 2025",
+      relationship: "teammate",
+      comment:
+        "Trained and quantized custom vision models on GPU clusters under tight latency constraints.",
+      status: "verified",
+      requestedAt: "Dec 16, 2025",
+      verifiedAt: "Dec 17, 2025",
+      proficiencyRating: 5,
+    },
+    {
+      id: "end-3",
+      skill: "Machine Learning",
+      endorserName: "Neha Gupta",
+      endorserRole: "Data Science Lead",
+      projectOrEvent: "Generative AI Bootcamp",
+      relationship: "collaborator",
+      comment:
+        "Demonstrated deep mastery of feature engineering, model evaluation, and fine-tuning pipelines.",
+      status: "verified",
+      requestedAt: "Jan 20, 2026",
+      verifiedAt: "Jan 21, 2026",
+      proficiencyRating: 5,
+    },
+    {
+      id: "end-4",
+      skill: "Git",
+      endorserName: "Devon Vance",
+      endorserRole: "Full-Stack Engineer",
+      projectOrEvent: "Campus Web Sprint",
+      relationship: "peer",
+      comment:
+        "Excellent branch hygiene, clean PR reviews, and conflict resolution across multi-author repositories.",
+      status: "verified",
+      requestedAt: "Feb 23, 2026",
+      verifiedAt: "Feb 24, 2026",
+      proficiencyRating: 4,
+    },
+    {
+      id: "end-5",
+      skill: "SQL",
+      endorserName: "Priya Patel",
+      endorserRole: "Database Admin Peer",
+      projectOrEvent: "SmartAttend Capstone",
+      relationship: "teammate",
+      comment: "Awaiting endorsement confirmation.",
+      status: "pending",
+      requestedAt: "2 days ago",
+    },
+  ],
 };
 
 export const initialOrganizerProfile: OrganizerProfile = {
@@ -328,5 +399,28 @@ export const sampleParticipationHistory = [
     date: "Feb 22, 2026",
     status: "Participated",
     skillsCredited: ["SQL", "Git"],
+  },
+];
+
+export const initialPeerEndorsementRequests: PeerEndorsementRequest[] = [
+  {
+    id: "peer-req-1",
+    requesterName: "Simran Kaur",
+    requesterRole: "Frontend & UI Lead",
+    skill: "React & Tailwind CSS",
+    projectOrEvent: "Smart India Hackathon 2025",
+    requestedAt: "Yesterday",
+    note: "Hey Rahul! Could you vouch for my React component architecture, animation states, and UI sprint delivery during SIH 2025?",
+    status: "pending",
+  },
+  {
+    id: "peer-req-2",
+    requesterName: "Amit Verma",
+    requesterRole: "Systems & DevOps Engineer",
+    skill: "Docker & CI/CD",
+    projectOrEvent: "AI/ML Hackathon 2026",
+    requestedAt: "3 days ago",
+    note: "Would appreciate an endorsement on our container orchestration and FastAPI containerization for the prototype.",
+    status: "pending",
   },
 ];

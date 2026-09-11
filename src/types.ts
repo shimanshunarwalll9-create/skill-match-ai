@@ -25,6 +25,49 @@ export interface StudentProfile {
   aiRecommendation: string;
   githubUrl?: string;
   portfolioUrl?: string;
+  linkedinUrl?: string;
+  college?: string;
+  bio?: string;
+  projects?: {
+    id: string;
+    title: string;
+    description: string;
+    techStack: string[];
+    liveUrl?: string;
+    repoUrl?: string;
+  }[];
+  endorsements?: SkillEndorsement[];
+  emailVerified?: boolean;
+  emailVerifiedAt?: string;
+}
+
+export interface SkillEndorsement {
+  id: string;
+  skill: string;
+  endorserName: string;
+  endorserRole: string;
+  endorserAvatar?: string;
+  projectOrEvent: string;
+  relationship: "teammate" | "collaborator" | "lead" | "peer";
+  comment?: string;
+  status: "verified" | "pending";
+  requestedAt: string;
+  verifiedAt?: string;
+  proficiencyRating?: number; // 1 to 5
+}
+
+export interface PeerEndorsementRequest {
+  id: string;
+  requesterName: string;
+  requesterRole: string;
+  requesterAvatar?: string;
+  skill: string;
+  projectOrEvent: string;
+  requestedAt: string;
+  note?: string;
+  status: "pending" | "endorsed" | "declined";
+  givenComment?: string;
+  givenRating?: number;
 }
 
 export interface OrganizerProfile {
@@ -37,6 +80,30 @@ export interface OrganizerProfile {
   website: string;
   contact: string;
   description: string;
+  emailVerified?: boolean;
+  emailVerifiedAt?: string;
+}
+
+export interface RegisteredUser {
+  id: string;
+  email: string;
+  password?: string;
+  fullName: string;
+  role: UserRole;
+  emailVerified: boolean;
+  emailVerifiedAt?: string;
+  createdAt: string;
+  studentProfile?: StudentProfile;
+  organizerProfile?: OrganizerProfile;
+}
+
+export interface VerificationDispatch {
+  email: string;
+  code: string;
+  expiresAt: number;
+  subject: string;
+  htmlBody: string;
+  sentVia: "smtp" | "simulated_preview";
 }
 
 export interface Opportunity {
@@ -56,6 +123,7 @@ export interface Opportunity {
   tag?: string;
   perks?: string[];
   applied?: boolean;
+  createdByUser?: boolean;
 }
 
 export interface AchievementBadge {
@@ -82,6 +150,7 @@ export interface TeammateCandidate {
   avatarUrl?: string;
   matchReason: string;
   invited?: boolean;
+  bio?: string;
 }
 
 export interface NotificationItem {

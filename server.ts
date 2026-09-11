@@ -3,6 +3,11 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import "dotenv/config";
+import {
+  sendVerificationEmail,
+  verifyEmailCode,
+  getPendingVerification,
+} from "./server/emailService";
 
 const app = express();
 const PORT = 3000;
@@ -25,6 +30,58 @@ function getGeminiClient(): GoogleGenAI | null {
 // 1. Health check
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", time: new Date().toISOString() });
+});
+
+// ---------------- EMAIL VERIFICATION & AUTH APIS ----------------
+app.post("/api/auth/send-verification", async (req, res) => {
+  try {
+    const { email, fullName, type = "signup" } = req.body;
+    if (!email || !email.includes("@")) {
+      return res.status(400).json({ success: false, error: "Valid email address is required." });
+    }
+    const result = await sendVerificationEmail(email, fullName, type);
+    res.json(result);
+  } catch (error: any) {
+    console.error("Failed to send verification email:", error);
+    res.status(500).json({ success: false, error: error?.message || "Failed to send email." });
+  }
+});
+
+app.post("/api/auth/verify-code", (req, res) => {
+  try {
+    const { email, code } = req.body;
+    if (!email || !code) {
+      return res.status(400).json({ success: false, error: "Email and 6-digit code are required." });
+    }
+    const result = verifyEmailCode(email, code);
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error?.message || "Verification failed." });
+  }
+});
+
+app.post("/api/auth/resend-code", async (req, res) => {
+  try {
+    const { email, fullName, type = "signup" } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, error: "Email address is required." });
+    }
+    const pending = getPendingVerification(email);
+    if (pending && Date.now() - pending.lastSentAt < 25000) {
+      const waitSec = Math.ceil((25000 - (Date.now() - pending.lastSentAt)) / 1000);
+      return res.status(429).json({
+        success: false,
+        error: `Please wait ${waitSec}s before requesting a new code.`,
+      });
+    }
+    const result = await sendVerificationEmail(email, fullName || pending?.fullName || "User", type);
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error?.message || "Resend failed." });
+  }
 });
 
 // 2. AI Career Assistant endpoint

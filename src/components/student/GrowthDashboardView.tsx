@@ -10,15 +10,24 @@ import {
   AlertCircle,
   BarChart3,
   ExternalLink,
+  ShieldCheck,
+  Star,
+  Plus,
+  Users,
 } from "lucide-react";
 import { StudentProfile, AchievementBadge, GrowthMetrics } from "../../types";
 import { sampleParticipationHistory } from "../../data/mockData";
+import { VerifiedSkillBadge } from "./VerifiedSkillBadge";
+import { getSkillVerification } from "../../utils/matchingEngine";
 
 interface GrowthDashboardViewProps {
   profile: StudentProfile;
   badges: AchievementBadge[];
   growth: GrowthMetrics;
   onNavigateTab: (tab: string) => void;
+  onOpenLogAchievement?: () => void;
+  onOpenVerificationHub?: () => void;
+  onOpenRequestEndorsement?: (skill?: string) => void;
 }
 
 export const GrowthDashboardView: React.FC<GrowthDashboardViewProps> = ({
@@ -26,8 +35,15 @@ export const GrowthDashboardView: React.FC<GrowthDashboardViewProps> = ({
   badges,
   growth,
   onNavigateTab,
+  onOpenLogAchievement,
+  onOpenVerificationHub,
+  onOpenRequestEndorsement,
 }) => {
   const breakdown = profile.readinessBreakdown;
+
+  const verifiedSkillsCount = (profile.skills || []).filter(
+    (s) => getSkillVerification(s, profile.endorsements || []).isVerified
+  ).length;
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in">
@@ -51,21 +67,31 @@ export const GrowthDashboardView: React.FC<GrowthDashboardViewProps> = ({
             </p>
           </div>
 
-          {/* Key counters */}
-          <div className="flex items-center gap-3">
-            <div className="px-4 py-3 bg-stone-50 rounded-xl border border-stone-200 text-center">
-              <div className="text-xl font-black text-stone-900">{growth.participations}</div>
-              <div className="text-[10px] uppercase font-bold text-stone-500">Participations</div>
+            <div className="flex items-center gap-3">
+              {onOpenLogAchievement && (
+                <button
+                  type="button"
+                  onClick={onOpenLogAchievement}
+                  className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5"
+                  id="growth-log-milestone-btn"
+                >
+                  <Award className="w-4 h-4" />
+                  + Log Milestone
+                </button>
+              )}
+              <div className="px-4 py-3 bg-stone-50 rounded-xl border border-stone-200 text-center">
+                <div className="text-xl font-black text-stone-900">{growth.participations}</div>
+                <div className="text-[10px] uppercase font-bold text-stone-500">Participations</div>
+              </div>
+              <div className="px-4 py-3 bg-stone-50 rounded-xl border border-stone-200 text-center">
+                <div className="text-xl font-black text-amber-600">{growth.applications}</div>
+                <div className="text-[10px] uppercase font-bold text-stone-500">Applications</div>
+              </div>
+              <div className="px-4 py-3 bg-stone-50 rounded-xl border border-stone-200 text-center">
+                <div className="text-xl font-black text-emerald-700">{growth.completed}</div>
+                <div className="text-[10px] uppercase font-bold text-stone-500">Completed</div>
+              </div>
             </div>
-            <div className="px-4 py-3 bg-stone-50 rounded-xl border border-stone-200 text-center">
-              <div className="text-xl font-black text-amber-600">{growth.applications}</div>
-              <div className="text-[10px] uppercase font-bold text-stone-500">Applications</div>
-            </div>
-            <div className="px-4 py-3 bg-stone-50 rounded-xl border border-stone-200 text-center">
-              <div className="text-xl font-black text-emerald-700">{growth.completed}</div>
-              <div className="text-[10px] uppercase font-bold text-stone-500">Completed</div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -202,7 +228,106 @@ export const GrowthDashboardView: React.FC<GrowthDashboardViewProps> = ({
         </div>
       </div>
 
-      {/* 3. Section 5: Achievements / Badges */}
+      {/* 3. Teammate Skill Verifications & Endorsements */}
+      <div className="bg-white rounded-2xl p-6 border border-stone-200 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <ShieldCheck className="w-5 h-5 text-emerald-600" />
+              <h2 className="text-lg font-bold text-stone-900">
+                🛡️ Teammate Skill Verifications & Verified Badges
+              </h2>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
+                {verifiedSkillsCount} / {profile.skills?.length || 0} Verified
+              </span>
+            </div>
+            <p className="text-xs text-stone-500">
+              Direct endorsements from teammates across hackathons and collaborative projects grant verified credibility badges.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {onOpenRequestEndorsement && (
+              <button
+                type="button"
+                onClick={() => onOpenRequestEndorsement()}
+                className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                id="growth-request-endorsement-btn"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Request Endorsement
+              </button>
+            )}
+            {onOpenVerificationHub && (
+              <button
+                type="button"
+                onClick={onOpenVerificationHub}
+                className="px-3.5 py-1.5 rounded-xl border border-stone-300 hover:bg-stone-100 text-stone-700 text-xs font-semibold transition-colors cursor-pointer"
+                id="growth-open-hub-btn"
+              >
+                Manage All Badges →
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Badges pills */}
+        <div className="flex flex-wrap gap-2.5 pt-1">
+          {profile.skills?.map((skill) => (
+            <VerifiedSkillBadge
+              key={skill}
+              skill={skill}
+              endorsements={profile.endorsements || []}
+              onRequestEndorsement={onOpenRequestEndorsement}
+              onViewVerificationDetails={() => onOpenVerificationHub?.()}
+            />
+          ))}
+        </div>
+
+        {/* Endorsements received cards preview */}
+        {profile.endorsements && profile.endorsements.filter(e => e.status === "verified").length > 0 && (
+          <div className="mt-4 pt-4 border-t border-stone-100 space-y-2">
+            <div className="text-xs font-bold text-stone-700 uppercase tracking-wider">
+              Recent Teammate Testimonials
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {profile.endorsements
+                .filter((e) => e.status === "verified")
+                .slice(0, 2)
+                .map((end) => (
+                  <div
+                    key={end.id}
+                    className="p-3.5 rounded-xl bg-stone-50 border border-stone-200 text-xs space-y-1.5"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-900 font-bold text-xs flex items-center justify-center">
+                          {end.endorserName.charAt(0)}
+                        </div>
+                        <div>
+                          <span className="font-bold text-stone-900">{end.endorserName}</span>
+                          <span className="text-[10px] text-stone-400 ml-1">({end.endorserRole})</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center text-amber-500 font-bold text-[11px]">
+                        <Star className="w-3 h-3 fill-amber-500 mr-0.5" />
+                        {end.proficiencyRating || 5}.0
+                      </div>
+                    </div>
+                    <div className="text-[11px] font-semibold text-emerald-800">
+                      Verified for: <span className="font-bold">{end.skill}</span> in {end.projectOrEvent}
+                    </div>
+                    {end.comment && (
+                      <p className="text-xs text-stone-600 italic">"{end.comment}"</p>
+                    )}
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 4. Section 5: Achievements / Badges */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -290,12 +415,51 @@ export const GrowthDashboardView: React.FC<GrowthDashboardViewProps> = ({
               Verified Participation History
             </h3>
           </div>
-          <span className="text-xs text-stone-400">
-            Audited by Event Organizers
-          </span>
+          <div className="flex items-center gap-2">
+            {onOpenLogAchievement && (
+              <button
+                type="button"
+                onClick={onOpenLogAchievement}
+                className="text-xs font-bold text-amber-700 hover:text-amber-800 underline"
+              >
+                + Log Event
+              </button>
+            )}
+            <span className="text-xs text-stone-400">
+              Audited by Organizers
+            </span>
+          </div>
         </div>
 
         <div className="divide-y divide-stone-100">
+          {/* Real user logged events */}
+          {(growth.eventsParticipated || []).map((ev) => (
+            <div
+              key={ev.id}
+              className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs bg-amber-50/30 px-2 rounded-lg"
+            >
+              <div>
+                <div className="font-bold text-stone-900 text-sm flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  {ev.title}
+                  <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-stone-900 text-white">
+                    Real Milestone
+                  </span>
+                </div>
+                <div className="text-stone-500 mt-0.5">
+                  {ev.type} · Skills credited: {ev.skillsUsed.join(", ")}
+                </div>
+              </div>
+              <div className="flex items-center gap-3 self-start sm:self-center">
+                <span className="text-stone-400 text-[11px]">{ev.date}</span>
+                <span className="px-2.5 py-1 rounded-full font-bold bg-emerald-50 text-emerald-900 border border-emerald-300">
+                  {ev.outcome}
+                </span>
+              </div>
+            </div>
+          ))}
+
+          {/* Sample historical events */}
           {sampleParticipationHistory.map((item, idx) => (
             <div
               key={idx}
