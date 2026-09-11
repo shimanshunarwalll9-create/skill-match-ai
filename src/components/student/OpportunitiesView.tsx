@@ -19,6 +19,7 @@ interface OpportunitiesViewProps {
   onApplyOpportunity: (id: string) => void;
   onNavigateTeamMatch: () => void;
   onOpenCreateOpp?: () => void;
+  onInspectOpportunity?: (opp: Opportunity) => void;
 }
 
 export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
@@ -27,12 +28,23 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
   onApplyOpportunity,
   onNavigateTeamMatch,
   onOpenCreateOpp,
+  onInspectOpportunity,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string>("All");
   const [expandedId, setExpandedId] = useState<string | null>("opp-1");
 
-  const types = ["All", "Hackathon", "Internship", "Workshop", "Competition"];
+  const types = [
+    "All",
+    "Hackathon",
+    "Internship",
+    "Job",
+    "Scholarship",
+    "Workshop",
+    "Competition",
+    "Course",
+    "Certification",
+  ];
 
   const filtered = opportunities.filter((opp) => {
     const matchesType = selectedType === "All" || opp.type === selectedType;
@@ -208,19 +220,34 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                       })}
                     </div>
 
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onApplyOpportunity(opp.id);
-                      }}
-                      className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                        opp.applied
-                          ? "bg-emerald-600 text-white cursor-default"
-                          : "bg-stone-900 hover:bg-stone-800 text-white shadow-xs"
-                      }`}
-                    >
-                      {opp.applied ? "Applied ✓" : "Apply to Opportunity"}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {onInspectOpportunity && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onInspectOpportunity(opp);
+                          }}
+                          className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <Sparkles className="w-3 h-3 text-amber-600" />
+                          View Match
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onApplyOpportunity(opp.id);
+                        }}
+                        className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                          opp.applied
+                            ? "bg-emerald-600 text-white cursor-default"
+                            : "bg-stone-900 hover:bg-stone-800 text-white shadow-xs"
+                        }`}
+                      >
+                        {opp.applied ? "Applied ✓" : "Apply to Opportunity"}
+                      </button>
+                    </div>
                   </div>
                 </div>
 

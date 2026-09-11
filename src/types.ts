@@ -106,10 +106,20 @@ export interface VerificationDispatch {
   sentVia: "smtp" | "simulated_preview";
 }
 
+export type OpportunityType =
+  | "Hackathon"
+  | "Internship"
+  | "Workshop"
+  | "Competition"
+  | "Scholarship"
+  | "Job"
+  | "Course"
+  | "Certification";
+
 export interface Opportunity {
   id: string;
   title: string;
-  type: "Hackathon" | "Internship" | "Workshop" | "Competition" | "Scholarship";
+  type: OpportunityType;
   hostOrg: string;
   matchPercentage: number;
   requiredSkills: string[];

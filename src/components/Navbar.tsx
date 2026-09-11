@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Bell,
   Sparkles,
@@ -12,9 +12,19 @@ import {
   Network,
   CheckCircle2,
   ShieldCheck,
+  Brain,
+  Target,
+  BookOpen,
+  ClipboardList,
+  Trophy,
+  Award,
+  Settings,
+  ChevronDown,
+  User,
+  Plus,
+  RotateCcw,
 } from "lucide-react";
 import { UserRole, NotificationItem } from "../types";
-import { User, Plus, RotateCcw } from "lucide-react";
 
 interface NavbarProps {
   currentRole: UserRole;
@@ -53,6 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCreateOpp,
   onResetData,
 }) => {
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
@@ -85,76 +96,173 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             {/* Navigation Tabs */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden xl:flex items-center gap-1">
               {currentRole === "student" ? (
                 <>
                   <button
                     onClick={() => onSelectTab("home")}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                       currentTab === "home"
                         ? "bg-stone-900 text-white shadow-xs"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
                     }`}
                     id="nav-student-home"
                   >
-                    <Compass className="w-4 h-4" />
+                    <Compass className="w-3.5 h-3.5" />
                     Dashboard
                   </button>
 
                   <button
                     onClick={() => onSelectTab("opportunities")}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                       currentTab === "opportunities"
                         ? "bg-stone-900 text-white shadow-xs"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
                     }`}
                     id="nav-student-opps"
                   >
-                    <Sparkles className="w-4 h-4" />
-                    Top Matches
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Opportunities
                   </button>
 
                   <button
-                    onClick={() => onSelectTab("teammatch")}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                      currentTab === "teammatch"
+                    onClick={() => onSelectTab("skill_profile")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                      currentTab === "skill_profile"
                         ? "bg-stone-900 text-white shadow-xs"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
                     }`}
-                    id="nav-student-teammatch"
+                    id="nav-student-skill-profile"
                   >
-                    <Users className="w-4 h-4" />
-                    TeamMatch
-                    <span className="text-[10px] px-1 py-0.2 bg-emerald-100 text-emerald-800 rounded font-semibold">
-                      AI
-                    </span>
+                    <Brain className="w-3.5 h-3.5" />
+                    Skill Profile
                   </button>
 
                   <button
-                    onClick={() => onSelectTab("growth")}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                      currentTab === "growth"
+                    onClick={() => onSelectTab("skill_gap")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                      currentTab === "skill_gap"
                         ? "bg-stone-900 text-white shadow-xs"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
                     }`}
-                    id="nav-student-growth"
+                    id="nav-student-skill-gap"
                   >
-                    <TrendingUp className="w-4 h-4" />
-                    My Growth
+                    <Target className="w-3.5 h-3.5" />
+                    Skill Gap
                   </button>
 
                   <button
-                    onClick={() => onSelectTab("assistant")}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                      currentTab === "assistant"
+                    onClick={() => onSelectTab("learning_plan")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                      currentTab === "learning_plan"
                         ? "bg-stone-900 text-white shadow-xs"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
                     }`}
-                    id="nav-student-assistant"
+                    id="nav-student-learning-plan"
                   >
-                    <Bot className="w-4 h-4 text-amber-500" />
-                    Career Assistant
+                    <BookOpen className="w-3.5 h-3.5" />
+                    Learning Plan
                   </button>
+
+                  <button
+                    onClick={() => onSelectTab("applications")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                      currentTab === "applications"
+                        ? "bg-stone-900 text-white shadow-xs"
+                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
+                    }`}
+                    id="nav-student-applications"
+                  >
+                    <ClipboardList className="w-3.5 h-3.5" />
+                    Applications
+                  </button>
+
+                  {/* More Features Dropdown */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 ${
+                        ["performance", "achievements", "assistant", "teammatch", "growth", "settings"].includes(currentTab)
+                          ? "bg-stone-900 text-white"
+                          : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
+                      }`}
+                    >
+                      <span>More</span>
+                      <ChevronDown className="w-3 h-3" />
+                    </button>
+
+                    {moreMenuOpen && (
+                      <div className="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-stone-200 py-2 z-50 animate-in fade-in">
+                        <button
+                          onClick={() => {
+                            onSelectTab("performance");
+                            setMoreMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs font-medium text-stone-700 hover:bg-stone-50 flex items-center gap-2"
+                        >
+                          <Trophy className="w-3.5 h-3.5 text-amber-600" />
+                          Performance History
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            onSelectTab("achievements");
+                            setMoreMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs font-medium text-stone-700 hover:bg-stone-50 flex items-center gap-2"
+                        >
+                          <Award className="w-3.5 h-3.5 text-amber-600" />
+                          Achievements & XP
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            onSelectTab("assistant");
+                            setMoreMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs font-medium text-stone-700 hover:bg-stone-50 flex items-center gap-2"
+                        >
+                          <Bot className="w-3.5 h-3.5 text-purple-600" />
+                          AI Career Assistant
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            onSelectTab("teammatch");
+                            setMoreMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs font-medium text-stone-700 hover:bg-stone-50 flex items-center gap-2"
+                        >
+                          <Users className="w-3.5 h-3.5 text-emerald-600" />
+                          TeamMatch AI
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            onSelectTab("growth");
+                            setMoreMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs font-medium text-stone-700 hover:bg-stone-50 flex items-center gap-2"
+                        >
+                          <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+                          Growth & Readiness
+                        </button>
+
+                        <div className="border-t border-stone-100 my-1" />
+
+                        <button
+                          onClick={() => {
+                            onSelectTab("settings");
+                            setMoreMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs font-medium text-stone-700 hover:bg-stone-50 flex items-center gap-2"
+                        >
+                          <Settings className="w-3.5 h-3.5 text-stone-500" />
+                          Settings & Preferences
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </>
               ) : (
                 <>
@@ -375,78 +483,64 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Mobile Navigation Sub-bar */}
-        <div className="flex md:hidden overflow-x-auto gap-2 py-2 border-t border-stone-100 text-xs no-scrollbar">
+        {/* Sub-bar / Quick Category Switcher */}
+        <div className="flex overflow-x-auto gap-1.5 py-2 border-t border-stone-100 text-xs no-scrollbar">
           {currentRole === "student" ? (
             <>
-              <button
-                onClick={() => onSelectTab("home")}
-                className={`px-2.5 py-1 rounded-md shrink-0 ${
-                  currentTab === "home" ? "bg-stone-900 text-white font-medium" : "text-stone-600"
-                }`}
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => onSelectTab("opportunities")}
-                className={`px-2.5 py-1 rounded-md shrink-0 ${
-                  currentTab === "opportunities"
-                    ? "bg-stone-900 text-white font-medium"
-                    : "text-stone-600"
-                }`}
-              >
-                Top Matches
-              </button>
-              <button
-                onClick={() => onSelectTab("teammatch")}
-                className={`px-2.5 py-1 rounded-md shrink-0 ${
-                  currentTab === "teammatch"
-                    ? "bg-stone-900 text-white font-medium"
-                    : "text-stone-600"
-                }`}
-              >
-                TeamMatch
-              </button>
-              <button
-                onClick={() => onSelectTab("growth")}
-                className={`px-2.5 py-1 rounded-md shrink-0 ${
-                  currentTab === "growth" ? "bg-stone-900 text-white font-medium" : "text-stone-600"
-                }`}
-              >
-                My Growth
-              </button>
-              <button
-                onClick={() => onSelectTab("assistant")}
-                className={`px-2.5 py-1 rounded-md shrink-0 ${
-                  currentTab === "assistant"
-                    ? "bg-stone-900 text-white font-medium"
-                    : "text-stone-600"
-                }`}
-              >
-                AI Assistant
-              </button>
+              {[
+                { id: "home", label: "Dashboard", icon: Compass },
+                { id: "opportunities", label: "Opportunities", icon: Sparkles },
+                { id: "skill_profile", label: "Skill Profile", icon: Brain },
+                { id: "skill_gap", label: "Skill Gap", icon: Target },
+                { id: "learning_plan", label: "Learning Plan", icon: BookOpen },
+                { id: "applications", label: "Applications", icon: ClipboardList },
+                { id: "performance", label: "Performance", icon: Trophy },
+                { id: "achievements", label: "Achievements", icon: Award },
+                { id: "assistant", label: "AI Assistant", icon: Bot },
+                { id: "teammatch", label: "TeamMatch", icon: Users },
+                { id: "settings", label: "Settings", icon: Settings },
+              ].map((item) => {
+                const IconComponent = item.icon;
+                const isActive = currentTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onSelectTab(item.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 flex items-center gap-1.5 transition-colors ${
+                      isActive
+                        ? "bg-stone-900 text-white shadow-2xs"
+                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
+                    }`}
+                  >
+                    <IconComponent className="w-3.5 h-3.5" />
+                    {item.label}
+                  </button>
+                );
+              })}
             </>
           ) : (
             <>
               <button
                 onClick={() => onSelectTab("organizer_home")}
-                className={`px-2.5 py-1 rounded-md shrink-0 ${
+                className={`px-3 py-1.5 rounded-xl shrink-0 text-xs font-semibold flex items-center gap-1.5 ${
                   currentTab === "organizer_home"
-                    ? "bg-stone-900 text-white font-medium"
-                    : "text-stone-600"
+                    ? "bg-stone-900 text-white shadow-2xs"
+                    : "text-stone-600 hover:bg-stone-100"
                 }`}
               >
-                Overview
+                <Building2 className="w-3.5 h-3.5" />
+                Organizer Hub
               </button>
               <button
                 onClick={() => onSelectTab("organizer_create")}
-                className={`px-2.5 py-1 rounded-md shrink-0 ${
+                className={`px-3 py-1.5 rounded-xl shrink-0 text-xs font-semibold flex items-center gap-1.5 ${
                   currentTab === "organizer_create"
-                    ? "bg-stone-900 text-white font-medium"
-                    : "text-stone-600"
+                    ? "bg-stone-900 text-white shadow-2xs"
+                    : "text-stone-600 hover:bg-stone-100"
                 }`}
               >
-                Create Event
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                Create Opportunity
               </button>
             </>
           )}

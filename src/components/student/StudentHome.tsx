@@ -16,6 +16,7 @@ import {
   Check,
   ShieldCheck,
   Award,
+  Compass,
 } from "lucide-react";
 import { StudentProfile, Opportunity, GrowthMetrics } from "../../types";
 import { VerifiedSkillBadge } from "./VerifiedSkillBadge";
@@ -28,6 +29,7 @@ interface StudentHomeProps {
   onNavigateTab: (tab: string) => void;
   onUpdateProfileStrength: (newScore: number, github: string) => void;
   onApplyOpportunity: (id: string) => void;
+  onInspectOpportunity?: (opp: Opportunity) => void;
   onOpenProfileEditor?: () => void;
   onAddSkillToProfile?: (skill: string) => void;
   onOpenCreateOpp?: () => void;
@@ -42,6 +44,7 @@ export const StudentHome: React.FC<StudentHomeProps> = ({
   onNavigateTab,
   onUpdateProfileStrength,
   onApplyOpportunity,
+  onInspectOpportunity,
   onOpenProfileEditor,
   onAddSkillToProfile,
   onOpenCreateOpp,
@@ -151,6 +154,89 @@ export const StudentHome: React.FC<StudentHomeProps> = ({
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 5 Core Metrics Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div
+          onClick={() => onNavigateTab("skill_profile")}
+          className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 hover:border-amber-400 hover:shadow-xs transition-all cursor-pointer group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-stone-500">Overall Skill Score</span>
+            <Sparkles className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-stone-900 mt-2">
+            87<span className="text-xs font-bold text-stone-400">/100</span>
+          </div>
+          <div className="text-[11px] font-medium text-emerald-600 mt-1 flex items-center gap-1">
+            <span>↑ +6 pts this month</span>
+          </div>
+        </div>
+
+        <div
+          onClick={() => onNavigateTab("opportunities")}
+          className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 hover:border-amber-400 hover:shadow-xs transition-all cursor-pointer group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-stone-500">Recommended</span>
+            <Compass className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-stone-900 mt-2">
+            {opportunities.length > 0 ? opportunities.length : 12}
+          </div>
+          <div className="text-[11px] font-medium text-stone-500 mt-1">
+            Top match: {opportunities[0]?.matchPercentage || 94}%
+          </div>
+        </div>
+
+        <div
+          onClick={() => onNavigateTab("applications")}
+          className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 hover:border-amber-400 hover:shadow-xs transition-all cursor-pointer group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-stone-500">Active Applications</span>
+            <ChevronRight className="w-4 h-4 text-purple-500 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-stone-900 mt-2">
+            8
+          </div>
+          <div className="text-[11px] font-medium text-amber-600 mt-1">
+            2 in Interview Stage
+          </div>
+        </div>
+
+        <div
+          onClick={() => onNavigateTab("skill_gap")}
+          className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 hover:border-amber-400 hover:shadow-xs transition-all cursor-pointer group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-stone-500">Skill Gaps</span>
+            <AlertCircle className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-stone-900 mt-2">
+            4
+          </div>
+          <div className="text-[11px] font-medium text-rose-600 mt-1">
+            Docker, Kubernetes, PyTorch...
+          </div>
+        </div>
+
+        <div
+          onClick={() => onNavigateTab("achievements")}
+          className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 hover:border-amber-400 hover:shadow-xs transition-all cursor-pointer group col-span-2 sm:col-span-1"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-stone-500">Achievements</span>
+            <Award className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-stone-900 mt-2">
+            7
+          </div>
+          <div className="text-[11px] font-medium text-amber-600 mt-1">
+            Level 4 Explorer (2,850 XP)
           </div>
         </div>
       </div>
@@ -355,6 +441,20 @@ export const StudentHome: React.FC<StudentHomeProps> = ({
                     </div>
 
                     <div className="flex items-center gap-2">
+                      {onInspectOpportunity && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onInspectOpportunity(opp);
+                          }}
+                          className="text-xs px-3 py-1.5 rounded-lg font-semibold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors flex items-center gap-1 cursor-pointer"
+                          title="View Match Breakdown, Required Skills, and AI Explanation"
+                        >
+                          <Sparkles className="w-3 h-3 text-amber-600" />
+                          View Match
+                        </button>
+                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -590,6 +690,187 @@ export const StudentHome: React.FC<StudentHomeProps> = ({
                 Get specific guidance on what internships to target and how to bridge skill gaps.
               </p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Sections B, C & D: Progress Analytics, Activity Timeline & AI Strategic Recommendation */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Section B: Skill Progress Over Time */}
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-stone-200 shadow-xs space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-amber-600" />
+              <h3 className="text-sm font-bold text-stone-900">
+                Skill Progress Over Time
+              </h3>
+            </div>
+            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              +25% in 5 mos
+            </span>
+          </div>
+          <p className="text-xs text-stone-500">
+            Monthly aggregate skill index based on verified projects, endorsements, and assessments.
+          </p>
+
+          {/* Graphical Bar Chart */}
+          <div className="pt-3 pb-1 space-y-3">
+            {[
+              { month: "Jan", score: 62 },
+              { month: "Feb", score: 68 },
+              { month: "Mar", score: 74 },
+              { month: "Apr", score: 81 },
+              { month: "May", score: 87, current: true },
+            ].map((item) => (
+              <div key={item.month} className="space-y-1">
+                <div className="flex items-center justify-between text-xs font-semibold">
+                  <span className={item.current ? "text-amber-950 font-bold" : "text-stone-600"}>
+                    {item.month} {item.current && "(Current)"}
+                  </span>
+                  <span className={item.current ? "text-amber-600 font-bold" : "text-stone-700"}>
+                    {item.score}%
+                  </span>
+                </div>
+                <div className="h-2 w-full bg-stone-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      item.current
+                        ? "bg-linear-to-r from-amber-500 to-amber-600"
+                        : "bg-stone-400"
+                    }`}
+                    style={{ width: `${item.score}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
+            <span className="text-[11px] text-stone-400">Target benchmark: 92%</span>
+            <button
+              onClick={() => onNavigateTab("growth")}
+              className="text-xs font-semibold text-amber-700 hover:text-amber-800"
+            >
+              Detailed Analytics →
+            </button>
+          </div>
+        </div>
+
+        {/* Section C: Recent Activity Timeline */}
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-stone-200 shadow-xs space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-stone-600" />
+              <h3 className="text-sm font-bold text-stone-900">
+                Recent Activity
+              </h3>
+            </div>
+            <span className="text-[11px] text-stone-400">Live Timeline</span>
+          </div>
+          <p className="text-xs text-stone-500">
+            Your latest platform submissions, verifications, and milestones.
+          </p>
+
+          <div className="space-y-3 pt-1">
+            {[
+              {
+                title: "Applied to AI Research Internship",
+                time: "2 hours ago",
+                icon: CheckCircle2,
+                color: "text-blue-600",
+                bg: "bg-blue-50",
+              },
+              {
+                title: "Completed Python Core Assessment (92%)",
+                time: "Yesterday",
+                icon: Check,
+                color: "text-emerald-600",
+                bg: "bg-emerald-50",
+              },
+              {
+                title: "Added React.js & Vite Certification",
+                time: "3 days ago",
+                icon: ShieldCheck,
+                color: "text-purple-600",
+                bg: "bg-purple-50",
+              },
+              {
+                title: "Skill score increased to 87/100",
+                time: "5 days ago",
+                icon: Sparkles,
+                color: "text-amber-600",
+                bg: "bg-amber-50",
+              },
+              {
+                title: 'Earned "Python Pro" gold badge',
+                time: "1 week ago",
+                icon: Award,
+                color: "text-amber-600",
+                bg: "bg-amber-50",
+              },
+            ].map((activity, idx) => {
+              const IconComp = activity.icon;
+              return (
+                <div key={idx} className="flex items-start gap-3 text-xs">
+                  <div className={`w-7 h-7 rounded-lg ${activity.bg} ${activity.color} flex items-center justify-center shrink-0 mt-0.5`}>
+                    <IconComp className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-stone-800 leading-snug">
+                      {activity.title}
+                    </p>
+                    <span className="text-[10px] text-stone-400">
+                      {activity.time}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Section D: AI Recommendation Banner */}
+        <div className="bg-linear-to-br from-amber-500/10 via-amber-500/5 to-white rounded-2xl p-5 sm:p-6 border border-amber-300/70 shadow-xs flex flex-col justify-between space-y-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded border border-amber-200">
+                AI Strategic Recommendation
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-stone-900 mt-3 leading-snug">
+              Unlock Top-Tier AI Opportunities
+            </h3>
+            <p className="text-xs text-stone-600 mt-2 leading-relaxed">
+              Based on your current profile, building one deployed deep learning project will increase your match score across 5 top internships by <span className="font-bold text-amber-700 bg-amber-100/60 px-1 py-0.5 rounded">+14%</span>.
+            </p>
+
+            <div className="mt-4 p-3 rounded-xl bg-white/80 border border-amber-200/80 space-y-1">
+              <div className="flex items-center justify-between text-xs font-semibold text-stone-800">
+                <span>Next Milestone: Deep Learning Demo</span>
+                <span className="text-amber-600 font-bold">+14% Match</span>
+              </div>
+              <p className="text-[11px] text-stone-500">
+                Recommended framework: PyTorch or HuggingFace Transformers
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-2 pt-2">
+            <button
+              onClick={() => onNavigateTab("skill_gap")}
+              className="flex-1 py-2.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition-colors shadow-2xs text-center flex items-center justify-center gap-1 cursor-pointer"
+            >
+              View Skill Gap
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => onNavigateTab("learning_plan")}
+              className="flex-1 py-2.5 px-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-semibold text-xs transition-colors text-center flex items-center justify-center gap-1 cursor-pointer"
+            >
+              Open Learning Plan
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
       </div>

@@ -232,6 +232,104 @@ export function saveStoredPeerRequests(requests: PeerEndorsementRequest[]) {
   }
 }
 
+// ---------------- APPLICATIONS TRACKER ----------------
+export function loadStoredApplications(): ApplicationItem[] {
+  try {
+    const raw = localStorage.getItem(KEYS.APPLICATIONS);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed to load applications from storage:", e);
+  }
+  return initialApplications;
+}
+
+export function saveStoredApplications(apps: ApplicationItem[]) {
+  try {
+    localStorage.setItem(KEYS.APPLICATIONS, JSON.stringify(apps));
+  } catch (e) {
+    console.error("Failed to save applications to storage:", e);
+  }
+}
+
+// ---------------- PERFORMANCE RECORDS ----------------
+export function loadStoredPerformance(): PerformanceRecord[] {
+  try {
+    const raw = localStorage.getItem(KEYS.PERFORMANCE);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed to load performance records from storage:", e);
+  }
+  return initialPerformanceRecords;
+}
+
+export function saveStoredPerformance(records: PerformanceRecord[]) {
+  try {
+    localStorage.setItem(KEYS.PERFORMANCE, JSON.stringify(records));
+  } catch (e) {
+    console.error("Failed to save performance records to storage:", e);
+  }
+}
+
+export const loadStoredPerformanceRecords = loadStoredPerformance;
+export const saveStoredPerformanceRecords = saveStoredPerformance;
+
+// ---------------- LEARNING PLAN ----------------
+export function loadStoredLearningPlan(): LearningTask[] {
+  try {
+    const raw = localStorage.getItem(KEYS.LEARNING_PLAN);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed to load learning plan from storage:", e);
+  }
+  return initialLearningPlan;
+}
+
+export function saveStoredLearningPlan(plan: LearningTask[]) {
+  try {
+    localStorage.setItem(KEYS.LEARNING_PLAN, JSON.stringify(plan));
+  } catch (e) {
+    console.error("Failed to save learning plan to storage:", e);
+  }
+}
+
+// ---------------- SKILL SCORES ----------------
+export function loadStoredSkillScores(): SkillScoreItem[] {
+  try {
+    const raw = localStorage.getItem(KEYS.SKILL_SCORES);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed to load skill scores from storage:", e);
+  }
+  return initialSkillScores;
+}
+
+export function saveStoredSkillScores(scores: SkillScoreItem[]) {
+  try {
+    localStorage.setItem(KEYS.SKILL_SCORES, JSON.stringify(scores));
+  } catch (e) {
+    console.error("Failed to save skill scores to storage:", e);
+  }
+}
+
+// ---------------- GAMIFICATION XP ----------------
+export function loadStoredXP(): number {
+  try {
+    const raw = localStorage.getItem("skillmatch_xp_v2");
+    if (raw) return parseInt(raw, 10) || 1420;
+  } catch (e) {
+    console.error("Failed to load XP from storage:", e);
+  }
+  return 1420; // Default Level 7 (1420 XP)
+}
+
+export function saveStoredXP(xp: number) {
+  try {
+    localStorage.setItem("skillmatch_xp_v2", xp.toString());
+  } catch (e) {
+    console.error("Failed to save XP to storage:", e);
+  }
+}
+
 // ---------------- AUTHENTICATION & SESSIONS ----------------
 
 export function loadStoredAuthState(): boolean {
