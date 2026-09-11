@@ -178,3 +178,125 @@ export interface ChatMessage {
   timestamp: string;
   quickPromptsUsed?: string;
 }
+
+export type SkillCategory = "technical" | "soft" | "tools" | "frameworks" | "domain";
+
+export interface SkillScoreItem {
+  id: string;
+  name: string;
+  score: number; // 0 - 100 e.g. 87
+  proficiency: "Beginner" | "Intermediate" | "Advanced";
+  category: SkillCategory;
+  verified?: boolean;
+  endorsementsCount?: number;
+}
+
+export type ApplicationStatus =
+  | "Saved"
+  | "Applied"
+  | "Under Review"
+  | "Shortlisted"
+  | "Interview"
+  | "Selected"
+  | "Rejected";
+
+export interface ApplicationItem {
+  id: string;
+  opportunityId: string;
+  title: string;
+  organization: string;
+  type: string;
+  dateApplied: string;
+  matchScore: number;
+  status: ApplicationStatus;
+  deadline: string;
+  location: string;
+  notes?: string;
+  mode?: "Remote" | "In-Person" | "Hybrid";
+  appliedVia?: "SkillMatch AI" | "Direct Campus" | "External Portal";
+}
+
+export type PerformanceCategory =
+  | "Hackathon"
+  | "Competition"
+  | "Internship"
+  | "Assessment"
+  | "Course"
+  | "Project"
+  | "Challenge";
+
+export interface PerformanceRecord {
+  id: string;
+  activity: string;
+  category: PerformanceCategory;
+  score: number; // e.g. 87%
+  rank: string; // e.g. "#12", "Top 5%", "#7"
+  date: string; // e.g. "Sep 2026"
+  status: "Completed" | "Certified" | "Finalist" | "Winner" | "In Progress";
+  organizerOrHost: string;
+  verifiedBadge?: string;
+  notes?: string;
+}
+
+export interface LearningTask {
+  id: string;
+  week: number;
+  title: string;
+  skill: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  estimatedTime: string; // e.g. "6 hours"
+  resourceType: string; // e.g. "Interactive Lab", "Video Course", "Capstone"
+  resourceUrl?: string;
+  completed: boolean;
+  xpReward: number;
+  completedAt?: string;
+}
+
+export interface ExplainableMatchData {
+  opportunityId: string;
+  opportunityTitle: string;
+  hostOrg: string;
+  matchPercentage: number;
+  breakdown: {
+    technicalSkills: number; // 94
+    experience: number; // 82
+    education: number; // 90
+    interests: number; // 95
+  };
+  matchingSkills: string[];
+  missingSkills: string[];
+  weakSkills: string[];
+  whyGoodMatch: string;
+  howToReach100: string[];
+}
+
+export interface SkillGapData {
+  targetOpportunityId: string;
+  targetTitle: string;
+  currentMatch: number; // 72%
+  potentialMatch: number; // 89%
+  matchingSkills: string[];
+  missingSkills: string[];
+  weakSkills: string[];
+  roadmap: {
+    skill: string;
+    priority: "High" | "Medium" | "Low";
+    estimatedHours: number;
+    recommendedResource: string;
+    potentialGain: number; // +8%
+  }[];
+}
+
+export interface ResumeAnalysisResult {
+  overallScore: number; // 84
+  candidateName: string;
+  detectedSkills: string[];
+  detectedInterests: string[];
+  detectedExperience: string[];
+  strengths: string[];
+  improvements: string[];
+  careerGoalSuggestion: string;
+  keywordsMatched: string[];
+  keywordsMissing: string[];
+}
+

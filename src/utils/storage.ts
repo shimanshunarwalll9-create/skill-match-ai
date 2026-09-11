@@ -20,7 +20,17 @@ import {
   initialNotifications,
   mockBadges,
   initialPeerEndorsementRequests,
+  initialSkillScores,
+  initialApplications,
+  initialPerformanceRecords,
+  initialLearningPlan,
 } from "../data/mockData";
+import {
+  SkillScoreItem,
+  ApplicationItem,
+  PerformanceRecord,
+  LearningTask,
+} from "../types";
 
 const KEYS = {
   STUDENT: "skillmatch_student_profile_v2",
@@ -36,6 +46,10 @@ const KEYS = {
   PEER_REQUESTS: "skillmatch_peer_requests_v2",
   ACCOUNTS: "skillmatch_accounts_v2",
   ACTIVE_USER: "skillmatch_active_user_v2",
+  APPLICATIONS: "skillmatch_applications_v2",
+  PERFORMANCE: "skillmatch_performance_v2",
+  LEARNING_PLAN: "skillmatch_learning_plan_v2",
+  SKILL_SCORES: "skillmatch_skill_scores_v2",
 };
 
 export function loadStoredStudent(): StudentProfile {
